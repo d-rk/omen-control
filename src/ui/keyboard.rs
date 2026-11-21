@@ -290,15 +290,44 @@ mod tests {
         let (kb, unit) = fit(SIZE);
         // Middle of the zone-2 band, on the Q-row.
         let p = Point::new(kb.x + 12.5 * unit, kb.y + 2.0 * unit);
-        assert_eq!(zone_at(SIZE, p), Some(2));
+        assert_eq!(zone_at(Layout::Full, SIZE, p), Some(2));
         // Every key's centre maps to the zone the key is drawn in.
-        let (_, _, ks) = keys(SIZE);
-        assert!(ks.iter().all(|k| zone_at(SIZE, k.rect.center()) == Some(k.zone)));
+        for layout in [Layout::Full, Layout::Transcend14] {
+            let (_, _, ks) = keys(layout, SIZE);
+            assert!(ks.iter().all(|k| zone_at(layout, SIZE, k.rect.center()) == Some(k.zone)));
+        }
     }
 
     /// Scenario: Click outside keyboard keeps selection
     #[test]
     fn click_outside_keyboard_keeps_selection() {
-        assert_eq!(zone_at(SIZE, Point::new(2.0, 2.0)), None);
+        assert_eq!(zone_at(Layout::Full, SIZE, Point::new(2.0, 2.0)), None);
+    }
+
+    /// Scenario: Transcend 14 zone layout
+    #[test]
+    fn transcend_14_zone_layout() {
+        let layout = Layout::for_product("OMEN Transcend Gaming Laptop 14-fb0xxx\n");
+        let (_, _, ks) = keys(layout, SIZE);
+        let zone = |label: &str| ks.iter().find(|k| k.label == label).unwrap().zone;
+        assert!(ks.iter().all(|k| k.label != "num"));
+        for wasd in ["W", "A", "S", "D"] {
+            assert_eq!(zone(wasd), 3, "{wasd}");
+        }
+        assert_eq!(zone("Q"), 2);
+        assert_eq!(zone("L"), 1);
+        assert_eq!(zone("P"), 0);
+    }
+
+    /// Scenario: Unknown model uses the full layout
+    #[test]
+    fn unknown_model_uses_the_full_layout() {
+        let layout = Layout::for_product("Some Other Laptop");
+        let (_, _, ks) = keys(layout, SIZE);
+        assert!(ks.iter().any(|k| k.label == "num"));
+        // Within each row, zones never decrease from left to right.
+        assert!(ks.windows(2).all(|w| w[0].rect.y != w[1].rect.y || w[0].zone <= w[1].zone));
+        assert_eq!(ks.first().unwrap().zone, 0);
+        assert_eq!(ks.last().unwrap().zone, 3);
     }
 }
