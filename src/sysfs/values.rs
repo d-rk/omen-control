@@ -26,6 +26,9 @@ impl ParseError {
 // ---------------------------------------------------------------------------------------------------------------------
 // Colour
 
+/// Gamma between screen colours and the values the keyboard firmware takes; tuned on an OMEN Transcend 14.
+pub const LED_GAMMA: f32 = 2.8;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(try_from = "String", into = "String")]
 pub struct Rgb {
@@ -47,6 +50,22 @@ impl Rgb {
         let f = factor.clamp(0.0, 1.0);
         let s = |c: u8| (f32::from(c) * f).round() as u8;
         Rgb::new(s(self.r), s(self.g), s(self.b))
+    }
+
+    /// The value to write to the driver so the LEDs show this screen colour. The firmware drives the LEDs linearly,
+    /// so each channel is converted with gamma [`LED_GAMMA`].
+    pub fn to_led(self) -> Rgb {
+        self.map_channels(LED_GAMMA)
+    }
+
+    /// The screen colour for a value read from the driver; the inverse of [`Rgb::to_led`].
+    pub fn to_screen(self) -> Rgb {
+        self.map_channels(1.0 / LED_GAMMA)
+    }
+
+    fn map_channels(self, exponent: f32) -> Rgb {
+        let m = |c: u8| (255.0 * (f32::from(c) / 255.0).powf(exponent)).round() as u8;
+        Rgb::new(m(self.r), m(self.g), m(self.b))
     }
 
     /// Linear blend from `self` (t = 0) to `other` (t = 1).
@@ -296,6 +315,13 @@ pub struct GradientGroup {
     /// Zone indices 0..ZONE_COUNT, ascending, no duplicates.
     pub zones: Vec<u8>,
     pub colors: Vec<Rgb>,
+}
+
+impl GradientGroup {
+    /// The same group with `f` applied to each colour.
+    pub fn map_colors(self, f: impl Fn(Rgb) -> Rgb) -> GradientGroup {
+        GradientGroup { colors: self.colors.into_iter().map(f).collect(), ..self }
+    }
 }
 
 pub fn parse_gradient_config(s: &str) -> Result<Vec<GradientGroup>, ParseError> {

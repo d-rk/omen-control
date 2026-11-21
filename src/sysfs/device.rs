@@ -68,13 +68,16 @@ impl Device {
     pub fn read_lighting(&self) -> LightingState {
         let p = &self.paths;
         LightingState {
-            zones: std::array::from_fn(|i| read_parsed(&p.rgb(&format!("zone{i:02}")), str::parse)),
+            zones: std::array::from_fn(|i| {
+                read_parsed(&p.rgb(&format!("zone{i:02}")), str::parse::<Rgb>).map(Rgb::to_screen)
+            }),
             has_all: p.rgb("all").exists(),
             brightness: read_parsed(&p.rgb("brightness"), |s| s.trim().parse::<u8>().map_err(|_| ())),
             brightness_lock: read_parsed(&p.rgb("brightness_lock"), parse_bool01),
             mode: read_parsed(&p.rgb("animation_mode"), str::parse),
             speed: read_parsed(&p.rgb("animation_speed"), |s| s.trim().parse::<u8>().map_err(|_| ())),
-            gradient: read_parsed(&p.rgb("gradient_config"), parse_gradient_config),
+            gradient: read_parsed(&p.rgb("gradient_config"), parse_gradient_config)
+                .map(|groups| groups.into_iter().map(|g| g.map_colors(Rgb::to_screen)).collect()),
         }
     }
 
@@ -111,11 +114,11 @@ impl Device {
     // -- writes -------------------------------------------------------------------------------------------------------
 
     pub fn write_zone(&self, zone: usize, color: Rgb) -> Result<(), Error> {
-        write(&self.paths.rgb(&format!("zone{zone:02}")), &color.to_string())
+        write(&self.paths.rgb(&format!("zone{zone:02}")), &color.to_led().to_string())
     }
 
     pub fn write_all_zones(&self, color: Rgb) -> Result<(), Error> {
-        write(&self.paths.rgb("all"), &color.to_string())
+        write(&self.paths.rgb("all"), &color.to_led().to_string())
     }
 
     pub fn write_brightness(&self, value: u8) -> Result<(), Error> {
@@ -142,7 +145,8 @@ impl Device {
                 value: format_gradient_config(std::slice::from_ref(g)),
             })?;
         }
-        write(&self.paths.rgb("gradient_config"), &format_gradient_config(groups))
+        let led: Vec<GradientGroup> = groups.iter().map(|g| g.clone().map_colors(Rgb::to_led)).collect();
+        write(&self.paths.rgb("gradient_config"), &format_gradient_config(&led))
     }
 
     pub fn write_thermal_profile(&self, profile: ThermalProfile) -> Result<(), Error> {
