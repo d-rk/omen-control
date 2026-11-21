@@ -46,6 +46,20 @@ colour to the `all` file and update all four zones in the preview.
 - **WHEN** the selected zone is red and the user presses "Apply to all"
 - **THEN** `FF0000` is written to `all` and every zone shows red
 
+### Requirement: LED colour correction
+The keyboard drives its LEDs linearly with the values in the colour files, while the app shows colours as a screen
+does. Colours SHALL be converted with a gamma of 2.8 per channel (`led = 255 × (screen / 255)^2.8`, rounded) when
+written to `zone00`–`zone03`, `all` and `gradient_config`, and converted back when read, so the keyboard matches the
+colour shown in the app. Black and full-intensity channels are unchanged.
+
+#### Scenario: Colour gamma-corrected on write
+- **WHEN** the user sets zone 0 to `E4002B`
+- **THEN** `BA0002` is written to `zone00`
+
+#### Scenario: Corrected colour read back
+- **WHEN** `zone00` contains `BA0002`
+- **THEN** zone 0 shows a colour that is written back as `BA0002`
+
 ### Requirement: Colour picker
 The colour picker SHALL offer a saturation/value square with a hue bar, a hex input and a row of swatches. Hex input
 SHALL accept six hex digits with or without `#` and SHALL show an inline error otherwise.
