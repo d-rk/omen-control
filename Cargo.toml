@@ -1,0 +1,20 @@
+[package]
+name = "omen-control"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+description = "Desktop UI for the omen-rgb-keyboard driver: HP OMEN keyboard lighting and fan control"
+repository = "https://github.com/OmenLinux/omen-control"
+rust-version = "1.88"
+
+[dependencies]
+iced = { version = "0.14", features = ["canvas", "tokio", "advanced"] }
+serde = { version = "1", features = ["derive"] }
+toml = "1"
+directories = "6"
+thiserror = "2"
+tempfile = "3"
+
+[profile.release]
+lto = "thin"
+strip = true
