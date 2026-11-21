@@ -242,6 +242,32 @@ mod tests {
         assert!(err.to_string().contains("max_fan"), "{err}");
     }
 
+    /// Scenario: Colour gamma-corrected on write
+    #[test]
+    fn colour_gamma_corrected_on_write() {
+        let mock = MockTree::create().unwrap();
+        let dev = Device::new(mock.paths().clone());
+        dev.write_zone(0, Rgb::new(0xE4, 0x00, 0x2B)).unwrap();
+        assert_eq!(fs::read_to_string(mock.paths().rgb("zone00")).unwrap(), "BA0002");
+        dev.write_all_zones(Rgb::new(0xE4, 0x00, 0x2B)).unwrap();
+        assert_eq!(fs::read_to_string(mock.paths().rgb("all")).unwrap(), "BA0002");
+        let g = GradientGroup { zones: vec![0, 1], colors: vec![Rgb::new(0xE4, 0x00, 0x2B), Rgb::WHITE] };
+        dev.write_gradient(&[g]).unwrap();
+        assert!(fs::read_to_string(mock.paths().rgb("gradient_config")).unwrap().contains("BA0002,FFFFFF"));
+    }
+
+    /// Scenario: Corrected colour read back
+    #[test]
+    fn corrected_colour_read_back() {
+        let mock = MockTree::create().unwrap();
+        fs::write(mock.paths().rgb("zone00"), "#ba0002\n").unwrap();
+        let dev = Device::new(mock.paths().clone());
+        let shown = dev.read_lighting().zones[0].unwrap();
+        assert_ne!(shown, Rgb::new(0xBA, 0x00, 0x02));
+        dev.write_zone(0, shown).unwrap();
+        assert_eq!(fs::read_to_string(mock.paths().rgb("zone00")).unwrap(), "BA0002");
+    }
+
     /// Scenario: Platform profile shown
     #[test]
     fn platform_profile_shown() {
