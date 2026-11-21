@@ -8,12 +8,27 @@ of writing sysfs files by hand.
 ## ADDED Requirements
 
 ### Requirement: Zone selection
-The lighting page SHALL draw the keyboard split into four zones, left to right zone 0 to zone 3, each filled with its
-colour. Clicking a zone SHALL select it and highlight it; exactly one zone SHALL be selected at a time.
+The lighting page SHALL draw the keyboard split into its four zones, each filled with its colour. Which keys a zone
+lights is decided by the laptop's firmware, so the page SHALL pick the layout from the DMI product name
+(`/sys/class/dmi/id/product_name`):
+
+- OMEN Transcend 14 (product name contains `14-fb0`): a compact layout without a numpad. W, A, S and D are zone 3;
+  the remaining keys are split into zone 2 (left), zone 1 (middle) and zone 0 (right).
+- Any other or unreadable product name: a full layout with a numpad, split left to right into zone 0 to zone 3.
+
+Clicking a zone SHALL select it and highlight it; exactly one zone SHALL be selected at a time.
 
 #### Scenario: Click selects zone
 - **WHEN** the user clicks inside the area of zone 2
 - **THEN** zone 2 becomes the selected zone
+
+#### Scenario: Transcend 14 zone layout
+- **WHEN** the product name is `OMEN Transcend Gaming Laptop 14-fb0xxx`
+- **THEN** the keyboard has no numpad, W, A, S and D are in zone 3, Q is in zone 2, L is in zone 1 and P is in zone 0
+
+#### Scenario: Unknown model uses the full layout
+- **WHEN** the product name is unknown
+- **THEN** the keyboard has a numpad and its zones run left to right from zone 0 to zone 3
 
 #### Scenario: Click outside keyboard keeps selection
 - **WHEN** the user clicks outside the keyboard outline
