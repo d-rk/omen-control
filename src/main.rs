@@ -2,6 +2,12 @@
 
 // Wired into the UI in a later commit.
 #[allow(dead_code, unused_imports)]
+mod detect;
+// Wired into the UI in a later commit.
+#[allow(dead_code, unused_imports)]
+mod profiles;
+// Wired into the UI in a later commit.
+#[allow(dead_code, unused_imports)]
 mod sysfs;
 
 fn main() {}
