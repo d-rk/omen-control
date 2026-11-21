@@ -12,6 +12,7 @@ use iced::{Center, Element, Fill, Rectangle, Renderer, Theme};
 
 use super::color::Hsv;
 use super::color_picker::ColorPicker;
+use super::keyboard::Layout;
 use super::preview::{self, PreviewInput};
 use super::theme;
 use super::{field_label, inline_error, section_title};
@@ -72,6 +73,7 @@ pub struct Available {
 #[derive(Debug, Clone)]
 pub struct Lighting {
     pub available: Available,
+    pub layout: Layout,
     pub zones: [Rgb; ZONE_COUNT],
     pub selected: usize,
     pub hovered: Option<usize>,
@@ -109,6 +111,7 @@ impl Lighting {
                 speed: s.speed.is_some(),
                 gradient: s.gradient.is_some(),
             },
+            layout: Layout::detect(),
             zones,
             selected,
             hovered: None,
@@ -293,6 +296,7 @@ impl Lighting {
     pub fn view(&self) -> Element<'_, Message> {
         let keyboard = container(
             canvas_widget(KeyboardCanvas {
+                layout: self.layout,
                 colors: self.preview_colors(),
                 selected: self.selected,
                 hovered: self.hovered,
@@ -507,6 +511,7 @@ impl Lighting {
 
 /// The keyboard preview: clicks select a zone, hovering outlines one.
 struct KeyboardCanvas {
+    layout: Layout,
     colors: [Rgb; ZONE_COUNT],
     selected: usize,
     hovered: Option<usize>,
@@ -516,7 +521,7 @@ impl canvas::Program<Message> for KeyboardCanvas {
     type State = ();
 
     fn update(&self, _: &mut (), event: &Event, bounds: Rectangle, cursor: Cursor) -> Option<Action<Message>> {
-        let zone = cursor.position_in(bounds).and_then(|p| super::keyboard::zone_at(bounds.size(), p));
+        let zone = cursor.position_in(bounds).and_then(|p| super::keyboard::zone_at(self.layout, bounds.size(), p));
         match event {
             Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {
                 zone.map(|z| Action::publish(Message::ZoneClicked(z)).and_capture())
@@ -530,12 +535,12 @@ impl canvas::Program<Message> for KeyboardCanvas {
 
     fn draw(&self, _: &(), renderer: &Renderer, _: &Theme, bounds: Rectangle, _: Cursor) -> Vec<Geometry> {
         let mut frame = Frame::new(renderer, bounds.size());
-        super::keyboard::draw(&mut frame, &self.colors, Some(self.selected), self.hovered);
+        super::keyboard::draw(&mut frame, self.layout, &self.colors, Some(self.selected), self.hovered);
         vec![frame.into_geometry()]
     }
 
     fn mouse_interaction(&self, _: &(), bounds: Rectangle, cursor: Cursor) -> mouse::Interaction {
-        match cursor.position_in(bounds).and_then(|p| super::keyboard::zone_at(bounds.size(), p)) {
+        match cursor.position_in(bounds).and_then(|p| super::keyboard::zone_at(self.layout, bounds.size(), p)) {
             Some(_) => mouse::Interaction::Pointer,
             None => mouse::Interaction::default(),
         }
