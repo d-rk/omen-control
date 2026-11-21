@@ -5,8 +5,11 @@ A desktop UI for the [omen-rgb-keyboard](https://github.com/OmenLinux/omen-rgb-k
 ## Where things live
 
 - Specs: `openspec/` (OpenSpec, root location). Each change is `openspec/changes/<id>/`.
-- Application code, tests and check commands: decided with the first change that picks the stack. Update this file
-  when they exist.
+- Application code: one Rust crate (iced 0.14 GUI), sources in `src/` (`sysfs/` backend, `profiles.rs`, `detect.rs`,
+  `ui/`). Unit tests sit next to the code in `#[cfg(test)]` modules; each names its scenario in a `/// Scenario:`
+  doc comment.
+- Check commands: `cargo fmt --check` (format), `cargo clippy --all-targets -- -D warnings` (lint), `cargo test`
+  (fast test suite). Run the app without hardware with `cargo run -- --mock`.
 - Repository tooling: `scripts/`, git hooks in `.githooks/`.
 
 ## Workflow for every behavioural change
