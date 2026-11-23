@@ -4,7 +4,7 @@ use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use iced::widget::{button, checkbox, column, container, pick_list, row, scrollable, space, text, text_input};
-use iced::{Center, Element, Fill, Subscription, Theme};
+use iced::{Center, Element, Fill, Subscription, Task, Theme};
 
 use super::{driver_missing, fans, lighting, theme};
 use crate::detect::{self, SecureBoot};
@@ -24,6 +24,7 @@ pub enum Message {
     Fans(fans::Message),
     Tick,
     CheckAgain,
+    Copy(String),
     ProfileChosen(String),
     ToggleProfilePanel,
     ProfileName(String),
@@ -106,7 +107,7 @@ impl App {
         }
     }
 
-    pub fn update(&mut self, msg: Message) {
+    pub fn update(&mut self, msg: Message) -> Task<Message> {
         match msg {
             Message::Nav(p) => self.page = p,
             Message::Lighting(m) => self.lighting.update(m, &self.device),
@@ -137,7 +138,12 @@ impl App {
             Message::IncludeFans(on) => self.include_fans = on,
             Message::SaveProfile => self.save_profile(),
             Message::DeleteProfile => self.delete_profile(),
+            Message::Copy(command) => {
+                self.status = Some(("Copied to the clipboard".to_owned(), false));
+                return iced::clipboard::write(command);
+            }
         }
+        Task::none()
     }
 
     fn apply_profile(&mut self, name: &str) {
@@ -218,6 +224,7 @@ impl App {
                 self.device.paths().driver.display().to_string(),
                 self.secure_boot,
                 Message::CheckAgain,
+                Message::Copy,
             ))
             .height(Fill)
             .into()
@@ -344,7 +351,7 @@ mod tests {
         let mut app = App::new(Config { device: Device::new(paths.clone()), mock: None, store: None });
         assert!(!app.driver_present);
         fs::create_dir_all(paths.driver.join("rgb_zones")).unwrap();
-        app.update(Message::CheckAgain);
+        let _ = app.update(Message::CheckAgain);
         assert!(app.driver_present);
     }
 
@@ -371,7 +378,7 @@ mod tests {
 
         let mut app = App::new(Config { device: dev.clone(), mock: None, store: Some(store) });
         assert_eq!(app.profiles, ["gaming"]);
-        app.update(Message::ProfileChosen("gaming".into()));
+        let _ = app.update(Message::ProfileChosen("gaming".into()));
         assert_eq!(dev.read_lighting().brightness, Some(30));
         assert_eq!(app.lighting.brightness, 30);
         assert_eq!(app.current_profile.as_deref(), Some("gaming"));

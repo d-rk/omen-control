@@ -6,7 +6,13 @@ use iced::{Center, Element, Fill, Font};
 use super::theme;
 use crate::detect::SecureBoot;
 
-pub fn view<'a, M: Clone + 'a>(root: String, secure_boot: SecureBoot, check_again: M) -> Element<'a, M> {
+/// `copy` turns a command's text into the message that puts it on the clipboard.
+pub fn view<'a, M: Clone + 'a>(
+    root: String,
+    secure_boot: SecureBoot,
+    check_again: M,
+    copy: fn(String) -> M,
+) -> Element<'a, M> {
     let step = |n: &'static str, title: &'static str, body: Element<'a, M>| -> Element<'a, M> {
         row![
             container(text(n).font(theme::BOLD).color(theme::ACCENT))
@@ -18,15 +24,22 @@ pub fn view<'a, M: Clone + 'a>(root: String, secure_boot: SecureBoot, check_agai
         .into()
     };
     let code = |s: &'static str| -> Element<'a, M> {
-        container(text(s).font(Font::MONOSPACE).size(12).color(theme::TEXT))
-            .padding([8, 12])
-            .width(Fill)
-            .style(|_: &iced::Theme| container::Style {
-                background: Some(iced::color!(0x0b0c10).into()),
-                border: iced::Border { color: theme::BORDER, width: 1.0, radius: 8.0.into() },
-                ..container::Style::default()
-            })
-            .into()
+        container(
+            row![
+                text(s).font(Font::MONOSPACE).size(12).color(theme::TEXT).width(Fill),
+                button(text("Copy").size(12)).padding([4, 10]).style(theme::ghost).on_press(copy(s.to_owned())),
+            ]
+            .spacing(12)
+            .align_y(Center),
+        )
+        .padding([8, 12])
+        .width(Fill)
+        .style(|_: &iced::Theme| container::Style {
+            background: Some(iced::color!(0x0b0c10).into()),
+            border: iced::Border { color: theme::BORDER, width: 1.0, radius: 8.0.into() },
+            ..container::Style::default()
+        })
+        .into()
     };
     let muted = |s: &'static str| -> Element<'a, M> { text(s).size(13).color(theme::MUTED).into() };
 
