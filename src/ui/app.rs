@@ -348,6 +348,16 @@ mod tests {
         assert!(app.driver_present);
     }
 
+    /// Scenario: Copy setup command
+    #[test]
+    fn copy_setup_command() {
+        let dir = tempfile::tempdir().unwrap();
+        let paths = Paths::from_env_value(dir.path().join("driver").to_str());
+        let mut app = App::new(Config { device: Device::new(paths), mock: None, store: None });
+        let _ = app.update(Message::Copy("sudo ./install-udev-rules.sh".into()));
+        assert_eq!(app.status, Some(("Copied to the clipboard".to_owned(), false)));
+    }
+
     /// Scenario: Choose profile from header
     #[test]
     fn choose_profile_from_header() {
