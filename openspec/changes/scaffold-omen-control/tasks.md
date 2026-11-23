@@ -40,6 +40,11 @@
 - [x] 7.2 README with driver dependency, build/run, `--mock` and the TODO list; verify the documented commands run
 - [x] 7.3 Verify `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass
 
+## 8. Fixes after first run
+
+- [ ] 8.1 Copy buttons on the driver-not-found commands; verify by pressing one and pasting
+- [ ] 8.2 Application id, X11 window icon, desktop entry, icon and install script; verify the taskbar icon on KDE Wayland after installing
+
 ## Workflow follow-up
 
 - Commit test-first in separate commits once the user allows committing.

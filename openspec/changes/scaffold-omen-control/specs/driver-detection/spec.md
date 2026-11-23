@@ -34,3 +34,11 @@ show the generic signing hint only.
 #### Scenario: Parse Secure Boot state
 - **WHEN** `mokutil --sb-state` prints `SecureBoot enabled`
 - **THEN** Secure Boot is reported as enabled
+
+### Requirement: Copyable setup commands
+Each shell command on the driver-not-found screen SHALL have a "Copy" button that puts the command's exact text on the
+clipboard and confirms the copy in the status bar.
+
+#### Scenario: Copy setup command
+- **WHEN** the user presses "Copy" next to the udev rules command
+- **THEN** the clipboard holds `sudo ./install-udev-rules.sh` and the status bar says the command was copied

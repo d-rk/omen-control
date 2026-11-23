@@ -16,7 +16,8 @@ backend, the main pages and the repository skeleton, so later work (tray, packag
 - Fans page: live RPM and temperatures, thermal profile, max fan, curve switch, drag-to-edit CPU/GPU curves, power
   limits.
 - Named profiles stored as TOML in the user's config directory, with a quick selector in the header.
-- A "driver not found" screen with setup steps when the sysfs root is missing.
+- A "driver not found" screen with setup steps, each command copyable, when the sysfs root is missing.
+- Application id `omen-control`, an icon and a desktop entry with a per-user install script.
 - Repository files: README, LICENSE, rustfmt config, `.gitignore` entries for Cargo; CLAUDE.md gets the check commands.
 
 ## Capabilities
@@ -29,6 +30,7 @@ backend, the main pages and the repository skeleton, so later work (tray, packag
 - `fan-control`: the fans page behaviour (live readings, profiles, curve editing, power limits).
 - `profiles`: saving, loading and deleting named settings profiles.
 - `driver-detection`: detecting a missing driver and guiding the user through setup.
+- `desktop-integration`: the application id, icon and desktop entry, so the desktop shows the app's own icon.
 
 ### Modified Capabilities
 
