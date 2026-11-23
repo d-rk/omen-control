@@ -11,6 +11,25 @@ use profiles::ProfileStore;
 use sysfs::{Device, Paths, mock::MockTree};
 use ui::app::{App, Config};
 
+/// Wayland matches windows to `omen-control.desktop` by this id; the desktop entry supplies the icon there.
+const APP_ID: &str = "omen-control";
+
+/// 64x64 RGBA rendering of `data/omen-control.svg`, used as the window icon on X11 (Wayland ignores it). Regenerate
+/// with `magick -background none data/omen-control.svg -resize 64x64 -depth 8 rgba:data/omen-control-64.rgba`.
+const ICON_RGBA: &[u8] = include_bytes!("../data/omen-control-64.rgba");
+
+fn window_settings() -> iced::window::Settings {
+    iced::window::Settings {
+        size: iced::Size::new(1280.0, 880.0),
+        icon: iced::window::icon::from_rgba(ICON_RGBA.to_vec(), 64, 64).ok(),
+        platform_specific: iced::window::settings::PlatformSpecific {
+            application_id: APP_ID.to_owned(),
+            ..Default::default()
+        },
+        ..Default::default()
+    }
+}
+
 const USAGE: &str = "\
 Usage: omen-control [--mock]
 
@@ -56,7 +75,7 @@ fn main() -> iced::Result {
         .title(App::title)
         .theme(App::theme)
         .subscription(App::subscription)
-        .window_size((1280.0, 880.0))
+        .window(window_settings())
         .antialiasing(true)
         .run()
 }

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=OMEN Control
+GenericName=Keyboard lighting and fan control
+Comment=Keyboard RGB and fan control for HP OMEN laptops (omen-rgb-keyboard driver)
+Exec=omen-control
+Icon=omen-control
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=omen;hp;rgb;keyboard;fan;lighting;
+StartupWMClass=omen-control

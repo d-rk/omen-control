@@ -42,6 +42,17 @@ Options:
 - `OMEN_SYSFS_ROOT=/path`: read the driver from another directory instead of
   `/sys/devices/platform/omen-rgb-keyboard`.
 
+### Desktop entry and icon
+
+On Wayland the desktop finds the window's icon through a desktop entry named after the app id (`omen-control`).
+Without one, the taskbar shows a generic icon. To install the entry and icon for your user, pointing at your build:
+
+```sh
+scripts/install-desktop-entry.sh                 # uses target/release/omen-control
+scripts/install-desktop-entry.sh /path/to/omen-control
+scripts/install-desktop-entry.sh --uninstall
+```
+
 ## Development
 
 ```sh
