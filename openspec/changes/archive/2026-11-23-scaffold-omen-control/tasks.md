@@ -42,8 +42,8 @@
 
 ## 8. Fixes after first run
 
-- [ ] 8.1 Copy buttons on the driver-not-found commands; verify by pressing one and pasting
-- [ ] 8.2 Application id, X11 window icon, desktop entry, icon and install script; verify the taskbar icon on KDE Wayland after installing
+- [x] 8.1 Copy buttons on the driver-not-found commands; verify by pressing one and pasting
+- [x] 8.2 Application id, X11 window icon, desktop entry, icon and install script; verify the taskbar icon on KDE Wayland after installing
 
 ## Workflow follow-up
 
