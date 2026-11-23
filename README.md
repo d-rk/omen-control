@@ -70,6 +70,10 @@ Specs and planned changes live in `openspec/`; see `CLAUDE.md` for the workflow.
 - Packaging: rpm (`cargo-generate-rpm`) and deb (`cargo-deb`) depending on an `omen-rgb-keyboard-dkms` package, plus an
   AppImage.
 - Userspace custom effects: colour from CPU temperature, audio-reactive lighting.
+- Keyboard backlight on/off switch matching the Fn key toggle. The firmware switch is separate from
+  `rgb_zones/brightness` and the driver doesn't expose it, so this needs a driver patch first: a `rgb_zones/backlight`
+  file using `HPWMI_FOURZONE` commands 4 (read) and 5 (write) (`0xE4` on, `0x64` off in other OMEN tools; verify on
+  this model). Then show the switch in the app only when the file exists.
 
 ## License
 
