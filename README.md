@@ -74,6 +74,11 @@ Specs and planned changes live in `openspec/`; see `CLAUDE.md` for the workflow.
   `rgb_zones/brightness` and the driver doesn't expose it, so this needs a driver patch first: a `rgb_zones/backlight`
   file using `HPWMI_FOURZONE` commands 4 (read) and 5 (write) (`0xE4` on, `0x64` off in other OMEN tools; verify on
   this model). Then show the switch in the app only when the file exists.
+- Keep chosen colours at boot. The firmware plays its own boot animation until the driver loads and restores
+  `/var/lib/omen-rgb-keyboard/state`, while colours set in OMEN Gaming Hub on Windows reportedly show from power-on.
+  The driver uses the same colour command (`HPWMI_FOURZONE`, type 3) and writes nothing at shutdown. Next: check
+  whether colours set on Linux show in the BIOS setup (F10) after a reboot and after a full power-off, then look in
+  OmenMon's documentation for a command that saves colours in the firmware.
 
 ## License
 
