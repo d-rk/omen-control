@@ -74,9 +74,6 @@ Specs and planned changes live in `openspec/`; see `CLAUDE.md` for the workflow.
   `rgb_zones/brightness` and the driver doesn't expose it, so this needs a driver patch first: a `rgb_zones/backlight`
   file using `HPWMI_FOURZONE` commands 4 (read) and 5 (write) (`0xE4` on, `0x64` off in other OMEN tools; verify on
   this model). Then show the switch in the app only when the file exists.
-- Skip the firmware's breathing effect at power-on. Colours set on Linux are kept by the firmware: after a reboot they
-  appear in the BIOS setup (F10) and before GRUB, without the driver. Only a short breathing effect plays first, during
-  power-on checks. Look for a BIOS option or a firmware command (OmenMon documents HP's calls) that turns it off.
 
 ## License
 
