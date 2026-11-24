@@ -1,0 +1,13 @@
+# Packit builds each GitHub release in the COPR project d--rk/omen-control.
+# fedora-all = every active Fedora release plus rawhide; the COPR project has the matching chroots.
+specfile_path: omen-control.spec
+upstream_package_name: omen-control
+upstream_tag_template: v{version}
+
+jobs:
+  - job: copr_build
+    trigger: release
+    targets:
+      - fedora-all-x86_64
+    owner: d--rk
+    project: omen-control
