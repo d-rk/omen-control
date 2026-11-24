@@ -48,6 +48,8 @@ The repository is `github.com/d-rk/omen-control`, with the Packit GitHub app ins
 - The spec runs `cargo build --release --locked`, with the toolchain from Fedora's `cargo` and `rust` packages.
 - The COPR project setting "enable internet access during builds" is turned on, so cargo can download the crates
   pinned in `Cargo.lock`. The release workflow's Fedora container has network access anyway.
+- Packit sets network access per build and defaults to off, overriding the project setting, so `.packit.yaml`
+  also sets `enable_net: true`.
 - Alternative: run `cargo vendor` in Packit's `create-archive` step and build offline. That is more robust, but it
   means a custom archive script. If COPR network access ever becomes a problem, switch to this.
 - `rust-version = "1.88"` is older than the Rust in every supported Fedora release, so the system toolchain is enough.

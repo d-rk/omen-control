@@ -11,3 +11,5 @@ jobs:
       - fedora-all-x86_64
     owner: d--rk
     project: omen-control
+    # cargo downloads the crates pinned in Cargo.lock; Packit disables network unless asked.
+    enable_net: true
