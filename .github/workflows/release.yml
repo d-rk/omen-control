@@ -12,7 +12,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: version
         name: Tag matches the crate and spec versions
         run: |
@@ -30,7 +30,7 @@ jobs:
     env:
       VERSION: ${{ needs.check.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
       - uses: taiki-e/install-action@v2
         with:
@@ -46,7 +46,7 @@ jobs:
           cp scripts/install-desktop-entry.sh "$dir/scripts/"
           cp LICENSE README.md "$dir/"
           tar -czf "dist/$dir.tar.gz" "$dir"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: deb
           path: dist/*
@@ -59,7 +59,7 @@ jobs:
       VERSION: ${{ needs.check.outputs.version }}
     steps:
       - run: dnf -y install git rpm-build cargo rust desktop-file-utils
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build rpm
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -68,7 +68,7 @@ jobs:
           git archive --prefix="omen-control-$VERSION/" -o "$top/SOURCES/omen-control-$VERSION.tar.gz" HEAD
           rpmbuild -ba --define "_topdir $top" omen-control.spec
           cp "$top"/RPMS/x86_64/*.rpm dist/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: rpm
           path: dist/*
@@ -79,7 +79,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true
