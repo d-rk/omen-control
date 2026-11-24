@@ -4,6 +4,11 @@ A desktop app for HP OMEN laptop keyboard lighting and fan control on Linux. It 
 [omen-rgb-keyboard](https://github.com/alessandromrc/omen-rgb-keyboard) kernel driver: it only reads and writes the
 driver's sysfs files, needs no root, and ships as a single binary.
 
+<p>
+  <a href="docs/screenshots/lighting.png"><img src="docs/screenshots/lighting.png" alt="Lighting page" width="49%"></a>
+  <a href="docs/screenshots/fans.png"><img src="docs/screenshots/fans.png" alt="Fans page" width="49%"></a>
+</p>
+
 - **Lighting**: the four keyboard zones on a clickable keyboard preview, a colour picker (HSV, hex, swatches),
   brightness, brightness lock, the driver's twelve animation modes with a live preview, speed, and a gradient editor.
 - **Fans**: live fan RPM and temperatures, thermal profile (silent / balanced / performance), max fan, custom curve
