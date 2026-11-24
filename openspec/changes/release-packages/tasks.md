@@ -2,7 +2,7 @@
 
 ## 1. deb package
 
-- [ ] 1.1 Set `repository` in `Cargo.toml` to `https://github.com/d-rk/omen-control`. Add `[package.metadata.deb]`: maintainer, section, the three assets plus doc files, `Depends: libxkbcommon0, libwayland-client0` and `Recommends: libvulkan1, libegl1`. Verify `cargo deb` builds, `dpkg-deb -c` lists `/usr/bin/omen-control`, the desktop entry and the icon, and `dpkg-deb -I` shows the declared dependencies.
+- [x] 1.1 Set `repository` in `Cargo.toml` to `https://github.com/d-rk/omen-control`. Add `[package.metadata.deb]`: maintainer, section, the three assets plus doc files, `Depends: libxkbcommon0, libwayland-client0` and `Recommends: libvulkan1, libegl1`. Verify `cargo deb` builds, `dpkg-deb -c` lists `/usr/bin/omen-control`, the desktop entry and the icon, and `dpkg-deb -I` shows the declared dependencies.
 
 ## 2. rpm spec and COPR
 
