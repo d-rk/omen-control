@@ -13,7 +13,7 @@
 
 ## 3. Release workflow
 
-- [ ] 3.1 Add `.github/workflows/release.yml`, triggered on `v*` tags, with these jobs:
+- [x] 3.1 Add `.github/workflows/release.yml`, triggered on `v*` tags, with these jobs:
   - `check`: the tag matches the crate version.
   - `deb`, on `ubuntu-24.04`: build the binary, the `.deb`, and the tarball (binary, `data/omen-control.desktop`, `data/omen-control.svg`, `scripts/install-desktop-entry.sh`, LICENSE, README).
   - `rpm`, in a `fedora:latest` container: `rpmbuild -ba` with the spec file.
