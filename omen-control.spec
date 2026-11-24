@@ -1,5 +1,5 @@
 Name:           omen-control
-Version:        0.1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Keyboard lighting and fan control for HP OMEN laptops
 
@@ -48,5 +48,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
 %changelog
+* Tue Nov 24 2026 Dirk Wilden <dirkwilden@gmail.com> - 0.2.0-1
+- First release built in COPR
+
 * Tue Nov 24 2026 Dirk Wilden <dirkwilden@gmail.com> - 0.1.0-1
 - First package
