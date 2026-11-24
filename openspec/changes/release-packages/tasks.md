@@ -7,7 +7,7 @@
 ## 2. rpm spec and COPR
 
 - [x] 2.1 Write `omen-control.spec`: `BuildRequires: cargo rust desktop-file-utils`, `cargo build --release --locked`, install the three files plus `%license`/`%doc`, run `desktop-file-validate` in `%check`, `Requires: libxkbcommon libwayland-client` and `Recommends: vulkan-loader mesa-libEGL`. Verify that `rpmbuild -ba` on a `git archive` tarball succeeds, and that `rpm -qlp` and `rpm -qp --requires --recommends` show the expected paths and dependencies.
-- [ ] 2.2 Install the built rpm on this machine (`sudo dnf install ./…rpm`). Verify OMEN Control appears in the application menu with its icon and starts (scenario "App listed after package install"). Then uninstall it.
+- [x] 2.2 Install the built rpm on this machine (`sudo dnf install ./…rpm`). Verify OMEN Control appears in the application menu with its icon and starts (scenario "App listed after package install"). Then uninstall it.
 - [x] 2.3 Add `.packit.yaml`: `specfile_path`, `upstream_tag_template: v{version}`, and a `copr_build` job with `trigger: release`, `targets: fedora-all-x86_64`, and `owner: d--rk`, `project: omen-control`. Verify with `packit validate-config`.
 - [ ] 2.4 Finish the one-time setup. Already done: the GitHub repo, the Packit app, and the COPR project with internet access and Packit allowed. Still to do: make sure the COPR project's chroots cover the Packit targets, and complete Packit's account verification if it asks for it. Verify that the first Packit-triggered build (see 5.1) produces an rpm in `d--rk/omen-control`.
 
@@ -20,7 +20,7 @@
   - `release`: run `gh release create` with all assets.
 
   Verify by running it against a test tag on a fork or with `act`, and check that a mismatched tag fails before any release is created (scenario "Tag does not match version").
-- [ ] 3.2 Clean-install check. Install the release `.deb` in a fresh `debian:stable` container and the release `.rpm` in a fresh `fedora:latest` container, each with the package manager, and check that the declared dependencies are pulled in (scenario "Install on a minimal system"). Start the app on a Wayland session from the installed package, without the driver loaded, and check that it shows the setup screen (scenario "Installed without the driver"). Move any library that turns out to be needed from Recommends to Requires.
+- [x] 3.2 Clean-install check. Install the release `.deb` in a fresh `debian:stable` container and the release `.rpm` in a fresh `fedora:latest` container, each with the package manager, and check that the declared dependencies are pulled in (scenario "Install on a minimal system"). Start the app on a Wayland session from the installed package, without the driver loaded, and check that it shows the setup screen (scenario "Installed without the driver"). Move any library that turns out to be needed from Recommends to Requires.
 
 ## 4. Docs
 
