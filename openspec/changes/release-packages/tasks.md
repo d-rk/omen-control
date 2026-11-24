@@ -24,7 +24,7 @@
 
 ## 4. Docs
 
-- [ ] 4.1 README: add an "Install" section covering COPR (`dnf copr enable …`), the `.deb`/`.rpm` from GitHub releases, and the tarball with the install script. Note that the packages target Wayland on current Fedora, Debian and Ubuntu. Add the note to run `scripts/install-desktop-entry.sh --uninstall` before switching to a package. Add a short "Releasing" note (bump the version, tag `vX.Y.Z`, push). Remove the packaging item from the TODO list. Verify the documented commands match the files produced in groups 1–3.
+- [x] 4.1 README: add an "Install" section covering COPR (`dnf copr enable …`), the `.deb`/`.rpm` from GitHub releases, and the tarball with the install script. Note that the packages target Wayland on current Fedora, Debian and Ubuntu. Add the note to run `scripts/install-desktop-entry.sh --uninstall` before switching to a package. Add a short "Releasing" note (bump the version, tag `vX.Y.Z`, push). Remove the packaging item from the TODO list. Verify the documented commands match the files produced in groups 1–3.
 
 ## 5. First release
 

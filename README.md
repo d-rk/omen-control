@@ -26,6 +26,26 @@ In short:
 
 Controls whose sysfs file is missing on your model are hidden or disabled.
 
+## Install
+
+Packages are built for Wayland sessions on current Fedora, Debian stable and Ubuntu LTS (x86_64). They contain the
+app only; install the driver as described above.
+
+- **Fedora (COPR)**, updated with normal system updates:
+
+  ```sh
+  sudo dnf copr enable d--rk/omen-control
+  sudo dnf install omen-control
+  ```
+
+- **Debian / Ubuntu**: download the `.deb` from the [latest release](https://github.com/d-rk/omen-control/releases/latest)
+  and run `sudo apt install ./omen-control_*_amd64.deb`. The release also has an `.rpm` for Fedora without COPR.
+- **Other distributions**: download the `omen-control-*-x86_64-linux.tar.gz` tarball, unpack it, and run
+  `scripts/install-desktop-entry.sh` inside it to add the app to your menu.
+
+If you installed a desktop entry for your user earlier (see below), remove it first with
+`scripts/install-desktop-entry.sh --uninstall`. Otherwise it hides the packaged one and keeps starting the old binary.
+
 ## Build and run
 
 Needs a recent stable Rust toolchain (1.88 or newer).
@@ -63,12 +83,20 @@ cargo test
 
 Specs and planned changes live in `openspec/`; see `CLAUDE.md` for the workflow.
 
+### Releasing
+
+1. Set the new version in `Cargo.toml` and in `Version:` of `omen-control.spec`, run `cargo build` to update
+   `Cargo.lock`, and commit.
+2. Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+
+The release workflow checks that the tag matches both versions, then publishes the `.deb`, `.rpm` and tarball as a
+GitHub release. Packit then builds the same tag in the [COPR project](https://copr.fedorainfracloud.org/coprs/d--rk/omen-control/).
+
 ## TODO
 
 - Tray icon via `ksni` (quick profile switch, open window).
 - Autostart `.desktop` entry that applies the last profile on login.
-- Packaging: rpm (`cargo-generate-rpm`) and deb (`cargo-deb`) depending on an `omen-rgb-keyboard-dkms` package, plus an
-  AppImage.
+- Package the omen-rgb-keyboard driver (akmod in the COPR project), so the app package can depend on it.
 - Userspace custom effects: colour from CPU temperature, audio-reactive lighting.
 - Keyboard backlight on/off switch matching the Fn key toggle. The firmware switch is separate from
   `rgb_zones/brightness` and the driver doesn't expose it, so this needs a driver patch first: a `rgb_zones/backlight`
