@@ -40,7 +40,8 @@ The repository is `github.com/d-rk/omen-control`, with the Packit GitHub app ins
 
 **Dependencies are declared by hand with each distribution's package names.**
 - rpm: `Requires: libxkbcommon libwayland-client`, `Recommends: vulkan-loader mesa-libEGL`.
-- deb: `Depends: libxkbcommon0, libwayland-client0`, `Recommends: libvulkan1, libegl1`.
+- deb: `Depends: $auto, libxkbcommon0, libwayland-client0`, `Recommends: libvulkan1, libegl1`. `$auto` only adds
+  `libc6 (>= 2.39)`, so a system with too old a glibc refuses the package instead of failing at startup.
 - GPU libraries are only recommended, because without them iced falls back to software rendering.
 
 **The COPR build has network access enabled. Crates are not vendored.**

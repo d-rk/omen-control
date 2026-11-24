@@ -21,7 +21,7 @@ section = "utils"
 extended-description = """\
 Keyboard lighting (four zones, animation modes, gradients) and fan control (thermal profile, fan curves, power \
 limits) for HP OMEN laptops. Needs the omen-rgb-keyboard kernel driver, which is installed separately."""
-depends = "libxkbcommon0, libwayland-client0"
+depends = "$auto, libxkbcommon0, libwayland-client0"
 recommends = "libvulkan1, libegl1"
 assets = [
     ["target/release/omen-control", "usr/bin/", "755"],
