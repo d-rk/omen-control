@@ -1,0 +1,89 @@
+# Builds the .deb, .rpm and tarball for a pushed vX.Y.Z tag and publishes them as a GitHub release.
+# Publishing the release also triggers Packit, which builds the same tag in COPR (see .packit.yaml).
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        name: Tag matches the crate and spec versions
+        run: |
+          version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)
+          spec_version=$(sed -n 's/^Version: *//p' omen-control.spec)
+          if [ "$GITHUB_REF_NAME" != "v$version" ] || [ "$spec_version" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME, Cargo.toml version $version and spec version $spec_version must match"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  deb:
+    needs: check
+    runs-on: ubuntu-24.04
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deb
+      - run: cargo build --release --locked
+      - run: cargo deb --no-build --output dist/
+      - name: Tarball
+        run: |
+          dir="omen-control-$VERSION-x86_64-linux"
+          mkdir -p "$dir/data" "$dir/scripts" "$dir/target/release"
+          cp target/release/omen-control "$dir/target/release/"
+          cp data/omen-control.desktop data/omen-control.svg "$dir/data/"
+          cp scripts/install-desktop-entry.sh "$dir/scripts/"
+          cp LICENSE README.md "$dir/"
+          tar -czf "dist/$dir.tar.gz" "$dir"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: dist/*
+
+  rpm:
+    needs: check
+    runs-on: ubuntu-24.04
+    container: fedora:latest
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - run: dnf -y install git rpm-build cargo rust desktop-file-utils
+      - uses: actions/checkout@v4
+      - name: Build rpm
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          top="$RUNNER_TEMP/rpmbuild"
+          mkdir -p "$top/SOURCES" dist
+          git archive --prefix="omen-control-$VERSION/" -o "$top/SOURCES/omen-control-$VERSION.tar.gz" HEAD
+          rpmbuild -ba --define "_topdir $top" omen-control.spec
+          cp "$top"/RPMS/x86_64/*.rpm dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm
+          path: dist/*
+
+  release:
+    needs: [deb, rpm]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --generate-notes dist/*
